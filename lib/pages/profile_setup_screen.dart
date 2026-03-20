@@ -53,7 +53,19 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       ..height = double.parse(_heightController.text)
       ..goal = _goal!;
 
-    await ref.read(userProfileProvider.notifier).updateUser(user);
+    try {
+      await ref.read(userProfileProvider.notifier).saveUser(user);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Ошибка сохранения. Проверьте подключение к интернету.',
+            ),
+          ),
+        );
+      }
+    }
 
     if (mounted && Navigator.of(context).canPop()) {
       Navigator.of(context).pop();

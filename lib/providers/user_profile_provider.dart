@@ -16,12 +16,19 @@ class UserProfileNotifier extends StateNotifier<UserProfile?> {
   }
 
   Future<void> loadUser() async {
-    final user = await _storage.getUser();
-    state = user;
+    try {
+      state = await _storage.getUser();
+    } catch (e) {
+      state = null;
+    }
   }
 
-  Future<void> updateUser(UserProfile user) async {
-    await _storage.saveUser(user);
-    state = user;
+  Future<void> saveUser(UserProfile user) async {
+    try {
+      await _storage.saveUser(user);
+      state = user;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

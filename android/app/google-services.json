@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "935384851011",
+    "project_id": "flutter-base-c5aab",
+    "storage_bucket": "flutter-base-c5aab.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935384851011:android:5762ef94bd5973a3acaaf6",
+        "android_client_info": {
+          "package_name": "com.example.ai_meal_planner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBE65M_rNBm3qSKSV45_-WOFkjcxcg_hYg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

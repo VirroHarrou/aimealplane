@@ -1,18 +1,28 @@
+import 'package:ai_meal_planner/firebase_options.dart';
 import 'package:ai_meal_planner/pages/main_plan_screen.dart';
 import 'package:ai_meal_planner/pages/profile_setup_screen.dart';
 import 'package:ai_meal_planner/providers/service_providers.dart';
 import 'package:ai_meal_planner/providers/user_profile_provider.dart';
 import 'package:ai_meal_planner/services/storage_service.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint("Firebase initialization failed: $e");
+  }
+
   await dotenv.load(fileName: ".env");
 
   final storageService = StorageService();
-  await storageService.init();
 
   runApp(
     ProviderScope(
