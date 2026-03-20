@@ -20,7 +20,11 @@ void main() async {
     debugPrint("Firebase initialization failed: $e");
   }
 
-  await dotenv.load(fileName: ".env");
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    debugPrint(".env файл не найден, полагаемся на --dart-define");
+  }
 
   final storageService = StorageService();
 

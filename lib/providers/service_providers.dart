@@ -6,7 +6,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final storageServiceProvider = Provider((ref) => StorageService());
 
 final geminiServiceProvider = Provider((ref) {
-  final apiKey = dotenv.env['GEMINI_API_KEY'];
-  if (apiKey == null) throw Exception('GEMINI_API_KEY not found in .env');
+  const envApiKey = String.fromEnvironment('GEMINI_API_KEY');
+
+  final apiKey = envApiKey.isNotEmpty
+      ? envApiKey
+      : dotenv.env['GEMINI_API_KEY'];
+
+  if (apiKey == null || apiKey.isEmpty) {
+    throw Exception('GEMINI_API_KEY не найден ни в окружении, ни в .env');
+  }
+
   return GeminiService(apiKey);
 });
