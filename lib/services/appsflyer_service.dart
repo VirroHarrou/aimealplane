@@ -5,17 +5,14 @@ class AFService {
   final String appId;
   late AppsflyerSdk _appsflyerSdk;
 
-  AFService({
-    required this.devKey,
-    required this.appId,
-    required Function(Map) onConversionData,
-  }) {
+  AFService({required this.devKey, required this.appId});
+
+  Future<void> init(Function(Map) onConversionData) async {
     final AppsFlyerOptions options = AppsFlyerOptions(
       afDevKey: devKey,
       appId: appId,
       showDebug: true,
       timeToWaitForATTUserAuthorization: 60,
-      disableAdvertisingIdentifier: false,
     );
 
     _appsflyerSdk = AppsflyerSdk(options);
@@ -25,10 +22,22 @@ class AFService {
     _appsflyerSdk.initSdk(
       registerConversionDataCallback: true,
       registerOnAppOpenAttributionCallback: true,
+      registerOnDeepLinkingCallback: true,
+    );
+
+    _appsflyerSdk.startSDK(
+      onSuccess: () {
+        print("AppsFlyer SDK initialized successfully.");
+      },
+      onError: (int errorCode, String errorMessage) {
+        print(
+          "Error initializing AppsFlyer SDK: Code $errorCode - $errorMessage",
+        );
+      },
     );
   }
 
-  Future<bool?> logEvent(String name, Map<dynamic, dynamic> params) {
+  Future<bool?> logEvent(String name, {Map<dynamic, dynamic>? params}) {
     return _appsflyerSdk.logEvent(name, params);
   }
 

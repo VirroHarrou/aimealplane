@@ -36,9 +36,14 @@ class MealPlanNotifier extends StateNotifier<AsyncValue<String?>> {
   }
 
   void onMealPlanGenerated(String dietType) {
-    _ref.read(appsflyerProvider).logEvent("af_meal_plan_generated", {
-      "diet_type": dietType,
-      "timestamp": DateTime.now().toIso8601String(),
-    });
+    _ref
+        .read(appsflyerProvider)
+        .logEvent(
+          "af_meal_plan_generated",
+          params: {
+            "diet_type": dietType,
+            "timestamp": DateTime.now().toIso8601String(),
+          },
+        );
   }
 }

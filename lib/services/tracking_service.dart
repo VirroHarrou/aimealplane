@@ -22,16 +22,16 @@ class TrackingService {
   static void _handleStatus(TrackingStatus status) {
     switch (status) {
       case TrackingStatus.authorized:
-        debugPrint("ATT: Доступ разрешен. IDFA доступен.");
+        debugPrint("ATT: Access is allowed. The IDFA is available.");
         break;
       case TrackingStatus.denied:
-        debugPrint("ATT: Пользователь отказал в доступе.");
+        debugPrint("ATT: The user denied access.");
         break;
       case TrackingStatus.restricted:
-        debugPrint("ATT: Доступ ограничен.");
+        debugPrint("ATT: Access is limited.");
         break;
       case TrackingStatus.notSupported:
-        debugPrint("ATT: Не поддерживается на этой версии ОС.");
+        debugPrint("ATT: Not supported on this OS version.");
         break;
       default:
         break;

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:ai_meal_planner/generated/l10n.dart';
 import 'package:ai_meal_planner/pages/profile_setup_screen.dart';
 import 'package:ai_meal_planner/providers/meal_plan_provider.dart';
+import 'package:ai_meal_planner/providers/service_providers.dart';
 import 'package:ai_meal_planner/widgets/meal_plan_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,7 +35,10 @@ class MainPlanScreen extends ConsumerWidget {
         child: Column(
           children: [
             ElevatedButton(
-              onPressed: () => ref.read(mealPlanProvider.notifier).fetchPlan(),
+              onPressed: () {
+                ref.read(mealPlanProvider.notifier).fetchPlan();
+                ref.read(appMetricaProvider).reportEvent("Plan generate click");
+              },
               child: Text(S.of(context).generatePlan),
             ),
             const Divider(),

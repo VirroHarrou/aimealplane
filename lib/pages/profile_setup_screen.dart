@@ -1,5 +1,6 @@
 import 'package:ai_meal_planner/generated/l10n.dart';
 import 'package:ai_meal_planner/models/user_profile.dart';
+import 'package:ai_meal_planner/providers/service_providers.dart';
 import 'package:ai_meal_planner/providers/user_profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -63,6 +64,8 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
   Future<void> _saveProfile() async {
     if (!_formKey.currentState!.validate()) return;
+
+    ref.read(appMetricaProvider).reportEvent("Profile saved");
 
     final user = UserProfile()
       ..gender = _gender!

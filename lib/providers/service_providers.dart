@@ -28,12 +28,14 @@ final trackingServiceProvider = Provider((ref) => TrackingService());
 final apphudProvider = Provider((ref) => ApphudService());
 
 final appsflyerProvider = Provider((ref) {
-  return AFService(
+  final afService = AFService(
     devKey: const String.fromEnvironment('AF_DEV_KEY'),
     appId: const String.fromEnvironment('AF_APP_ID'),
-    onConversionData: (data) =>
-        ref.read(apphudProvider).handleAttribution(afData: data),
   );
+  afService.init(
+    (data) => ref.read(apphudProvider).handleAttribution(afData: data),
+  );
+  return afService;
 });
 
 final appInitializerProvider = FutureProvider<void>((ref) async {
