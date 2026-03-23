@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'package:ai_meal_planner/generated/l10n.dart';
+import 'package:ai_meal_planner/pages/profile_setup_screen.dart';
 import 'package:ai_meal_planner/providers/meal_plan_provider.dart';
 import 'package:ai_meal_planner/widgets/meal_plan_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'profile_setup_screen.dart';
 
 class MainPlanScreen extends ConsumerWidget {
   const MainPlanScreen({super.key});
@@ -14,7 +15,7 @@ class MainPlanScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("AI План Питания"),
+        title: Text(S.of(context).appTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -24,7 +25,7 @@ class MainPlanScreen extends ConsumerWidget {
                 MaterialPageRoute(builder: (_) => const ProfileSetupScreen()),
               );
             },
-            tooltip: 'Редактировать профиль',
+            tooltip: S.of(context).editProfile,
           ),
         ],
       ),
@@ -34,16 +35,17 @@ class MainPlanScreen extends ConsumerWidget {
           children: [
             ElevatedButton(
               onPressed: () => ref.read(mealPlanProvider.notifier).fetchPlan(),
-              child: const Text("Сгенерировать план на сегодня"),
+              child: Text(S.of(context).generatePlan),
             ),
             const Divider(),
             Expanded(
               child: planAsync.when(
                 data: (data) => data == null
-                    ? const Center(child: Text("Нажмите кнопку для генерации"))
-                    : _buildPlanView(data),
+                    ? Center(child: Text(S.of(context).pressButtonToGenerate))
+                    : _buildPlanView(data, context),
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text("Ошибка: $e")),
+                error: (e, _) =>
+                    Center(child: Text(S.of(context).error(e.toString()))),
               ),
             ),
           ],
@@ -52,7 +54,7 @@ class MainPlanScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPlanView(String jsonString) {
+  Widget _buildPlanView(String jsonString, BuildContext context) {
     try {
       final decoded = jsonDecode(jsonString) as Map<String, dynamic>;
       return SingleChildScrollView(child: MealPlanView(plan: decoded));
@@ -60,7 +62,7 @@ class MainPlanScreen extends ConsumerWidget {
       return Center(
         child: Column(
           children: [
-            const Text('Ошибка формата данных:'),
+            Text(S.of(context).formatError),
             const SizedBox(height: 8),
             Text(e.toString()),
             const SizedBox(height: 8),

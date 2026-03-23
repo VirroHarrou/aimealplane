@@ -1,7 +1,9 @@
+import 'package:ai_meal_planner/generated/l10n.dart';
 import 'package:ai_meal_planner/models/user_profile.dart';
 import 'package:ai_meal_planner/providers/user_profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class ProfileSetupScreen extends ConsumerStatefulWidget {
   const ProfileSetupScreen({super.key});
@@ -13,18 +15,19 @@ class ProfileSetupScreen extends ConsumerStatefulWidget {
 class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  String? _gender;
+  BannerAd? _bannerAd;
+  bool _isBannerLoaded = false;
+
+  Gender? _gender;
+  DietGoal? _goal;
   final _ageController = TextEditingController();
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
-  String? _goal;
-
-  final List<String> _genders = ['Мужской', 'Женский'];
-  final List<String> _goals = ['похудение', 'масса', 'поддержание'];
 
   @override
   void initState() {
     super.initState();
+    _loadBanner();
     final user = ref.read(userProfileProvider);
     if (user != null) {
       _gender = user.gender;
@@ -33,6 +36,21 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       _heightController.text = user.height.toString();
       _goal = user.goal;
     }
+  }
+
+  void _loadBanner() {
+    _bannerAd = BannerAd(
+      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) => setState(() => _isBannerLoaded = true),
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          debugPrint('BannerAd failed to load: $error');
+        },
+      ),
+    )..load();
   }
 
   @override
@@ -57,13 +75,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       await ref.read(userProfileProvider.notifier).saveUser(user);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Ошибка сохранения. Проверьте подключение к интернету.',
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(S.of(context).saveError)));
       }
     }
 
@@ -75,71 +89,114 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ваш профиль')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              DropdownButtonFormField<String>(
-                initialValue: _gender,
-                decoration: const InputDecoration(labelText: 'Пол'),
-                items: _genders
-                    .map((g) => DropdownMenuItem(value: g, child: Text(g)))
-                    .toList(),
-                onChanged: (value) => setState(() => _gender = value),
-                validator: (value) => value == null ? 'Выберите пол' : null,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _ageController,
-                decoration: const InputDecoration(labelText: 'Возраст (лет)'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) return 'Введите возраст';
-                  if (int.tryParse(value) == null) return 'Введите число';
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _weightController,
-                decoration: const InputDecoration(labelText: 'Вес (кг)'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) return 'Введите вес';
-                  if (double.tryParse(value) == null) return 'Введите число';
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _heightController,
-                decoration: const InputDecoration(labelText: 'Рост (см)'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) return 'Введите рост';
-                  if (double.tryParse(value) == null) return 'Введите число';
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: _goal,
-                decoration: const InputDecoration(labelText: 'Цель'),
-                items: _goals
-                    .map((g) => DropdownMenuItem(value: g, child: Text(g)))
-                    .toList(),
-                onChanged: (value) => setState(() => _goal = value),
-                validator: (value) => value == null ? 'Выберите цель' : null,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _saveProfile,
-                child: const Text('Сохранить'),
-              ),
-            ],
+      appBar: AppBar(title: Text(S.of(context).profile)),
+      body: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                DropdownButtonFormField<Gender>(
+                  initialValue: _gender,
+                  decoration: InputDecoration(labelText: S.of(context).gender),
+                  items: [
+                    DropdownMenuItem(
+                      value: Gender.male,
+                      child: Text(S.of(context).genderMale),
+                    ),
+                    DropdownMenuItem(
+                      value: Gender.female,
+                      child: Text(S.of(context).genderFemale),
+                    ),
+                  ],
+                  onChanged: (value) => setState(() => _gender = value),
+                  validator: (value) =>
+                      value == null ? S.of(context).selectGender : null,
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _ageController,
+                  decoration: InputDecoration(labelText: S.of(context).age),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return S.of(context).inputAge;
+                    }
+                    if (int.tryParse(value) == null) {
+                      return S.of(context).validationNumber;
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _weightController,
+                  decoration: InputDecoration(labelText: S.of(context).weight),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return S.of(context).inputWeight;
+                    }
+                    if (double.tryParse(value) == null) {
+                      return S.of(context).validationNumber;
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _heightController,
+                  decoration: InputDecoration(labelText: S.of(context).height),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return S.of(context).inputHeight;
+                    }
+                    if (double.tryParse(value) == null) {
+                      return S.of(context).validationNumber;
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<DietGoal>(
+                  initialValue: _goal,
+                  decoration: InputDecoration(labelText: S.of(context).goal),
+                  items: [
+                    DropdownMenuItem(
+                      value: DietGoal.loss,
+                      child: Text(S.of(context).goalLoss),
+                    ),
+                    DropdownMenuItem(
+                      value: DietGoal.mass,
+                      child: Text(S.of(context).goalMass),
+                    ),
+                    DropdownMenuItem(
+                      value: DietGoal.maintenance,
+                      child: Text(S.of(context).goalMaintenance),
+                    ),
+                  ],
+                  onChanged: (value) => setState(() => _goal = value),
+                  validator: (value) =>
+                      value == null ? S.of(context).selectGoal : null,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _saveProfile,
+                  child: Text(S.of(context).save),
+                ),
+                const SizedBox(height: 24),
+                if (_isBannerLoaded)
+                  Container(
+                    alignment: Alignment.center,
+                    width: _bannerAd!.size.width.toDouble(),
+                    height: _bannerAd!.size.height.toDouble(),
+                    child: AdWidget(ad: _bannerAd!),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

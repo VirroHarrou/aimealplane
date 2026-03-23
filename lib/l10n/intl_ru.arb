@@ -1,0 +1,89 @@
+{
+    "appTitle": "AI План Питания",
+    "save": "Сохранить",
+    "gender": "Пол",
+    "age": "Возраст (лет)",
+    "weight": "Вес (кг)",
+    "height": "Рост (см)",
+    "goal": "Цель",
+    "generatePlan": "Сгенерировать план на сегодня",
+    "editProfile": "Редактировать профиль",
+    "profile": "Профиль",
+    "pressButtonToGenerate": "Нажмите кнопку для генерации",
+    "formatError": "Ошибка формата данных:",
+    "loading": "Загрузка...",
+    "error": "Ошибка: {message}",
+    "@error": {
+        "placeholders": {
+            "message": {
+                "type": "String"
+            }
+        }
+    },
+    "saveError": "Ошибка сохранения. Проверьте подключение к интернету.",
+    "validationRequired": "Введите {field}",
+    "@validationRequired": {
+        "placeholders": {
+            "field": {
+                "type": "String"
+            }
+        }
+    },
+    "validationNumber": "Введите число",
+    "selectGender": "Выберите пол",
+    "selectGoal": "Выберите цель",
+    "inputAge": "Введите возраст",
+    "inputHeight": "Введите рост",
+    "inputWeight": "Введите вес",
+    "genderMale": "Мужской",
+    "genderFemale": "Женский",
+    "goalLoss": "похудение",
+    "goalMass": "масса",
+    "goalMaintenance": "поддержание",
+    "summary": "Общая калорийность: {calories} ккал",
+    "@summary": {
+        "placeholders": {
+            "calories": {
+                "type": "int"
+            }
+        }
+    },
+    "summaryAdditional": "Белки: {p}, жиры: {f}, углеводы {c}",
+    "@summaryAdditional": {
+        "placeholders": {
+            "p": {
+                "type": "String"
+            },
+            "f": {
+                "type": "String"
+            },
+            "c": {
+                "type": "String"
+            }
+        }
+    },
+    "geminiPrompt": "Ты — профессиональный диетолог. Составь план питания на один день для пользователя: Пол: {gender}, Возраст: {age}, Вес: {weight}кг, Рост: {height}см. Цель: {goal}. Ответь СТРОГО в формате JSON без markdown. Структура: {jsonStructure}",
+    "@geminiPrompt": {
+        "placeholders": {
+            "gender": {
+                "type": "String"
+            },
+            "age": {
+                "type": "int"
+            },
+            "weight": {
+                "type": "double"
+            },
+            "height": {
+                "type": "double"
+            },
+            "goal": {
+                "type": "String"
+            },
+            "jsonStructure": {
+                "type": "String"
+            }
+        }
+    },
+    "jsonStructure": "{\"calories\": \"число\", \"pfc\": {\"p\": \"белки\", \"f\": \"жиры\", \"c\": \"углеводы\"}, \"meals\": [{\"time\": \"Завтрак\", \"dish\": \"название\", \"recipe\": \"кратко\"}]}"
+}

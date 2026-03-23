@@ -1,0 +1,89 @@
+{
+    "appTitle": "AI Meal Planner",
+    "save": "Save",
+    "gender": "Gender",
+    "age": "Age (years)",
+    "weight": "Weight (kg)",
+    "height": "Height (cm)",
+    "goal": "Goal",
+    "generatePlan": "Generate plan for today",
+    "editProfile": "Edit Profile",
+    "profile": "Profile",
+    "pressButtonToGenerate": "Press the button to generate",
+    "formatError": "Data format error:",
+    "loading": "Loading...",
+    "error": "Error: {message}",
+    "@error": {
+        "placeholders": {
+            "message": {
+                "type": "String"
+            }
+        }
+    },
+    "saveError": "Save error. Please check your internet connection.",
+    "validationRequired": "Please enter {field}",
+    "@validationRequired": {
+        "placeholders": {
+            "field": {
+                "type": "String"
+            }
+        }
+    },
+    "validationNumber": "Please enter a number",
+    "selectGender": "Select gender",
+    "selectGoal": "Select goal",
+    "inputAge": "Input age",
+    "inputHeight": "Input height",
+    "inputWeight": "Input weight",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "goalLoss": "weight loss",
+    "goalMass": "muscle gain",
+    "goalMaintenance": "maintenance",
+    "summary": "Total calories: {calories} kcal",
+    "@summary": {
+        "placeholders": {
+            "calories": {
+                "type": "int"
+            }
+        }
+    },
+    "summaryAdditional": "Protein: {p}, fat: {f}, carbohydrates {c}",
+    "@summaryAdditional": {
+        "placeholders": {
+            "p": {
+                "type": "String"
+            },
+            "f": {
+                "type": "String"
+            },
+            "c": {
+                "type": "String"
+            }
+        }
+    },
+    "geminiPrompt": "You are a professional nutritionist. Create a one-day meal plan for a user: Gender: {gender}, Age: {age}, Weight: {weight}kg, Height: {height}cm. Goal: {goal}. Respond STRICTLY in JSON format without markdown. Structure: {jsonStructure}",
+    "@geminiPrompt": {
+        "placeholders": {
+            "gender": {
+                "type": "String"
+            },
+            "age": {
+                "type": "int"
+            },
+            "weight": {
+                "type": "double"
+            },
+            "height": {
+                "type": "double"
+            },
+            "goal": {
+                "type": "String"
+            },
+            "jsonStructure": {
+                "type": "String"
+            }
+        }
+    },
+    "jsonStructure": "{\"calories\": \"number\", \"pfc\": {\"p\": \"protein\", \"f\": \"fat\", \"c\": \"carbs\"}, \"meals\": [{\"time\": \"Breakfast\", \"dish\": \"name\", \"recipe\": \"briefly\"}]}"
+}

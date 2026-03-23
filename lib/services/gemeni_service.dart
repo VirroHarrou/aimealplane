@@ -1,3 +1,4 @@
+import 'package:ai_meal_planner/generated/l10n.dart';
 import 'package:ai_meal_planner/models/user_profile.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
@@ -7,26 +8,27 @@ class GeminiService {
     : _model = GenerativeModel(model: 'gemini-2.5-flash', apiKey: apiKey);
 
   Future<String> generate(UserProfile profile) async {
-    final prompt =
-        '''
-    Ты — профессиональный диетолог. Составь план питания на один день для пользователя:
-    Пол: ${profile.gender}, Возраст: ${profile.age}, Вес: ${profile.weight}кг, Рост: ${profile.height}см.
-    Цель: ${profile.goal}.
-    
-    Ответь СТРОГО в формате JSON без лишнего текста и markdown разметки.
-    Формат:
-    {
-      "calories": "число",
-      "pfc": {"p": "белки", "f": "жиры", "c": "углеводы"},
-      "meals": [
-        {"time": "Завтрак", "dish": "название", "recipe": "кратко"},
-        {"time": "Обед", "dish": "название", "recipe": "кратко"},
-        {"time": "Ужин", "dish": "название", "recipe": "кратко"}
-      ]
-    }
-    ''';
+    final genderText = profile.gender == Gender.male
+        ? S.current.genderMale
+        : S.current.genderFemale;
+    final goalText = {
+      DietGoal.loss: S.current.goalLoss,
+      DietGoal.mass: S.current.goalMass,
+      DietGoal.maintenance: S.current.goalMaintenance,
+    }[profile.goal];
 
-    final response = await _model.generateContent([Content.text(prompt)]);
+    final response = await _model.generateContent([
+      Content.text(
+        S.current.geminiPrompt(
+          genderText,
+          profile.age,
+          profile.weight,
+          profile.height,
+          goalText ?? '',
+          S.current.jsonStructure,
+        ),
+      ),
+    ]);
     return response.text!
         .replaceAll('```json', '')
         .replaceAll('```', '')

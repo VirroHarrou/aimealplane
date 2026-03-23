@@ -27,16 +27,15 @@ AI Meal Planner — это высокопроизводительное Flutter-
 ## ⚙️ Установка и запуск
 Клонируйте репозиторий.
 
-Настройте окружение:
-Создайте файл .env в корне проекта и добавьте ваш ключ:
-
-``` 
-GEMINI_API_KEY=your_api_key_here
-```
 Запуск:
 
-```Bash
-flutter run
+```bash
+flutter run \
+  --dart-define=GEMINI_API_KEY=ваш_ключ \
+  --dart-define=AF_DEV_KEY=ваш_ключ \
+  --dart-define=AF_APP_ID=ваш_id \
+  --dart-define=APPHUD_KEY=ваш_ключ \
+  --dart-define=APPMETRICA_KEY=ваш_ключ
 ```
 ## 🛡 Обработка исключений
 

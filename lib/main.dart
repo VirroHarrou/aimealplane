@@ -1,13 +1,12 @@
+import 'package:ai_meal_planner/app_root.dart';
 import 'package:ai_meal_planner/firebase_options.dart';
-import 'package:ai_meal_planner/pages/main_plan_screen.dart';
-import 'package:ai_meal_planner/pages/profile_setup_screen.dart';
 import 'package:ai_meal_planner/providers/service_providers.dart';
-import 'package:ai_meal_planner/providers/user_profile_provider.dart';
 import 'package:ai_meal_planner/services/storage_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,14 +15,11 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-  } catch (e) {
-    debugPrint("Firebase initialization failed: $e");
-  }
 
-  try {
-    await dotenv.load(fileName: ".env");
+    FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+    MobileAds.instance.initialize();
   } catch (e) {
-    debugPrint(".env файл не найден, полагаемся на --dart-define");
+    debugPrint(e.toString());
   }
 
   final storageService = StorageService();
@@ -34,18 +30,4 @@ void main() async {
       child: const AppRoot(),
     ),
   );
-}
-
-class AppRoot extends ConsumerWidget {
-  const AppRoot({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProfileProvider);
-
-    return MaterialApp(
-      title: 'AI Meal Planner',
-      home: user == null ? const ProfileSetupScreen() : const MainPlanScreen(),
-    );
-  }
 }

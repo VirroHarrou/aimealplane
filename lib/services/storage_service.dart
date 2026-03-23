@@ -1,4 +1,4 @@
-import 'dart:async'; // Добавлено для TimeoutException
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ai_meal_planner/models/user_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,7 +7,6 @@ import 'package:uuid/uuid.dart';
 class StorageService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   String? _cachedUserId;
-  // Устанавливаем разумный таймаут для сетевых запросов
   final Duration _timeout = const Duration(seconds: 10);
 
   Future<String> get _userId async {
@@ -32,18 +31,11 @@ class StorageService {
 
       await _db
           .collection('users')
-          .doc(uid)
-          .set({
-            'userId': uid,
-            'gender': user.gender,
-            'age': user.age,
-            'weight': user.weight,
-            'height': user.height,
-            'goal': user.goal,
-          })
-          .timeout(_timeout); // Предотвращаем бесконечное ожидание
+          .doc(user.userId)
+          .set(user.toMap(), SetOptions(merge: true))
+          .timeout(_timeout);
     } catch (e) {
-      throw Exception('Не удалось сохранить данные в Firebase: $e');
+      throw Exception(e);
     }
   }
 
@@ -56,18 +48,12 @@ class StorageService {
           .get()
           .timeout(_timeout);
 
-      if (!doc.exists) return null;
-
-      final data = doc.data()!;
-      return UserProfile()
-        ..userId = data['userId'] ?? uid
-        ..gender = data['gender']
-        ..age = data['age']
-        ..weight = data['weight']
-        ..height = data['height']
-        ..goal = data['goal'];
+      if (doc.exists && doc.data() != null) {
+        return UserProfile.fromMap(doc.id, doc.data()!);
+      }
+      return null;
     } catch (e) {
-      throw Exception('Не удалось получить пользователя из Firebase: $e');
+      throw Exception(e);
     }
   }
 
@@ -103,7 +89,6 @@ class StorageService {
           .timeout(_timeout);
       return doc.exists ? doc.data()!['rawJson'] as String : null;
     } catch (e) {
-      // Если кэш недоступен из-за сети, возвращаем null, чтобы попробовать сгенерировать новый
       return null;
     }
   }
